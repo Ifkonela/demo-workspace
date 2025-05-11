@@ -91,7 +91,12 @@ const choiceHandler = async (event) => {
         const data = await response.json();
 
         document.getElementById('location-text').innerText = data.text;
-        document.getElementById('location-image').src = data.imagePath;
+        const imageElement = document.getElementById('location-image');
+        if (imageElement && data.imagePath) {
+            imageElement.src = data.imagePath;
+        } else if (imageElement) {
+            imageElement.style.display = 'none'; 
+        }
 
         const choicesContainer = document.getElementById('choices');
         choicesContainer.innerHTML = ''; 
