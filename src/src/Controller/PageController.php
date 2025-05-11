@@ -11,6 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\User;
 use App\Entity\Choice;
 use App\Entity\Artefact;
+use Symfony\Component\Asset\Packages;
 
 class PageController extends AbstractController
 {
@@ -73,7 +74,7 @@ class PageController extends AbstractController
     }
 
     #[Route('/move', name: 'move', methods: ['POST'])]
-    public function move(Request $request, EntityManagerInterface $em): Response
+    public function move(Request $request, EntityManagerInterface $em, Packages $packages): Response
     {
         $data = json_decode($request->getContent(), true);
         $choiceId = isset($data['choiceId']) ? (int)$data['choiceId'] : 0;
@@ -103,6 +104,7 @@ class PageController extends AbstractController
 
         return $this->json([
             'text' => $targetLocation->getLocationText(),
+            'imagePath' => $targetLocation->getImagePath() ? $packages->getUrl($targetLocation->getImagePath()) : null,
             'choices' => array_map(function ($choice) {
                 return [
                     'id' => $choice->getId(),

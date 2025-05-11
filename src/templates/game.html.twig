@@ -5,25 +5,27 @@
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 {% endblock %}
 
 {% block body %}
     <header>
         <button id="audio-btn" class="audio-btn">Zapnout/vypnout zvuk</button>
         <audio id="audio" src="{{ asset('audio/wholeGame.mp3') }}" loop></audio>
-        <h1>{{ 'No Bad Choices'}}</h1>
     </header>
 
     <main>
-        <section class="game-image">
-            {% if imagePath %}
-                <img src="{{ asset(imagePath) }}" alt="Obrázek lokace" class="location-image">
-            {% endif %}
+        <section id="dialog-box" class="dialog hidden">
+            <p id="dialog-text"></p>
+            <button id="dialog-next" class="choice-btn">Pokračovat</button>
         </section>
-
         <section class="game-text">
             <p id="location-text">{{ text|nl2br }}</p>
+        </section>
+        <section class="game-image">
+            {% if imagePath %}
+                <img id="location-image" src="{{ asset(imagePath) }}" alt="" class="location-image">
+            {% endif %}
         </section>
 
         {% if artefacts|length > 0 %}
@@ -89,6 +91,7 @@ const choiceHandler = async (event) => {
         const data = await response.json();
 
         document.getElementById('location-text').innerText = data.text;
+        document.getElementById('location-image').src = data.imagePath;
 
         const choicesContainer = document.getElementById('choices');
         choicesContainer.innerHTML = ''; 
