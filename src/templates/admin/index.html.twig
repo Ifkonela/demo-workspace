@@ -74,8 +74,94 @@
         </div>
     </div>
 
-    <h2>Stromová struktura lokací</h2>
+    <h2>Graf větvení příběhu</h2>
+<div id="story-graph" style="height: 600px; border: 1px solid #ccc; margin-top: 20px;"></div>
 
+<script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+<script>
+    const nodes = new vis.DataSet({{ graphData.nodes|json_encode|raw }});
+    const edges = new vis.DataSet({{ graphData.edges|json_encode|raw }});
+
+    const container = document.getElementById('story-graph');
+    const data = {
+        nodes: nodes,
+        edges: edges
+    };
+
+    const options = {
+        layout: {
+            hierarchical: {
+            direction: "UD",
+            sortMethod: "directed",
+            levelDistance: 1500,
+            }
+        },
+
+        edges: {
+            arrows: {
+                to: { enabled: true, scaleFactor: 0.5 },
+                scaleFactor: 1.5 // zvětšení šipky o 50%
+            },
+            font: {
+                align: 'top',      // popisky budou nad hranou
+                size: 14,
+                face: 'monospace',
+                strokeWidth: 3,    // obrys textu
+            },
+            color: {
+                color: '#555',
+                highlight: '#000',
+                hover: '#000'
+            },
+            smooth: {
+                type: 'cubicBezier',
+                forceDirection: 'vertical',
+                roundness: 0.2,
+            }
+        },
+
+nodes: {
+    shape: 'box',
+    margin: 5,
+    widthConstraint: {
+      maximum: 200
+    },
+    font: {
+      size: 12,
+      face: 'monospace',
+      color: '#000000'
+    },
+    color: {
+      background: 'rgba(255, 255, 255, 0.5)', // Průhledné pozadí
+      border: '#cccccc',
+      highlight: {
+        background: 'rgba(255, 255, 255, 0.7)',
+        border: '#333333'
+      }
+    },
+    shadow: false
+  },
+        physics: {
+    enabled: true,
+    solver: 'repulsion',
+    repulsion: {
+        nodeDistance: 1500,
+        centralGravity: 0.2,
+        springLength: 100,
+        springConstant: 0.05,
+        damping: 0.09
+    }
+},
+layout: {
+    improvedLayout: true
+}
+
+    };
+
+    const network = new vis.Network(container, data, options);
+</script>
+
+    <h2>Tabulkový přehled</h2>
 {% if locationsData is empty %}
     <p class="table-empty">No locations found.</p>
 {% else %}

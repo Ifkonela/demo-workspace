@@ -51,6 +51,27 @@ class AdminController extends AbstractController
 
         $choices = $em->getRepository(Choice::class)->findAll();
 
+        // Pro grafové zobrazení
+$allLocations = $em->getRepository(Location::class)->findAll();
+$nodes = [];
+$edges = [];
+
+foreach ($allLocations as $loc) {
+    $nodes[] = [
+        'id' => $loc->getId(),
+        'label' => mb_substr($loc->getLocationText(), 0, 30) . '...',
+    ];
+
+    foreach ($loc->getChoices() as $choice) {
+        $edges[] = [
+            'from' => $loc->getId(),
+            'to' => $choice->getToLocation()->getId(),
+            'label' => $choice->getChoiceText(),
+        ];
+    }
+}
+
+
         $locationsData = [];
         foreach ($locations as $location) {
             $outgoingChoices = [];
@@ -76,7 +97,11 @@ class AdminController extends AbstractController
             'locationsData' => $locationsData,
             'totalLocations' => $totalLocations,
             'page' => $page,
-            'limit' => $limit
+            'limit' => $limit,
+            'graphData' => [
+                'nodes' => $nodes,
+                'edges' => $edges,
+            ]
         ]);
     }
 
